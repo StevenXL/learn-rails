@@ -19,9 +19,13 @@ Make sure to add the following code to the '~/.gemrc' file: 'gem: --no-document'
 We can use the following workflow for creating a new Rails project:
 
 > mkdir app_name
+
 > cd app_name
+
 > rvm use ruby-2.2.0@app_name --ruby-version --create
+
 > gem install rails
+
 > rails new.
 
 What we are doing here is creating a project-specific gemset called 'app_name'. The third line in our blockquote is doing several things. First, 'rvm use' is telling RVM to switch to this gemset. The 'ruby-2.2.0@app_name' is telling RVM not only the name of the gemset, but also the ruby version that should be installed in that gemset. Finally, the '--ruby-version' creates two files: '.ruby-version' and '.ruby-gemset'. These files will make it so that, whenever you enter into the directory, rvm will use the correct version of ruby and the correct gemset. Using *this* workflow means that you can forget about having to switch to the correct gemset.
@@ -55,6 +59,7 @@ Most of our work will be spent in the 'app/' directory. The app directory contai
 It is important to configure git properly when using Rails. To configure git, run the following:
 
 > git config --global user.name "Real Name"
+
 > git config --global user.email "real@email.com"
 
 After creating a repository on github.com - making sure not to initialize it through the web interface - directions for initializing a repo from an existing directory will be available. 
