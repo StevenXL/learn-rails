@@ -10,11 +10,11 @@ One important piece of the puzzle to remember is that gems installed in the 'glo
 
 Once you create a gemset, install the correct version of the gems in that gemset. Then, whenever you are in a project directory, make sure you are using the correct gemset. 
 
-Each time I update the Gemset file, I have to run 'bundle install' for bundle to install the gems properly. 
+Each time I update the Gemset file, I have to run `bundle install` for bundle to install the gems properly. 
 
 ## Faster Gem Installation
 
-Make sure to add the following code to the '~/.gemrc' file: 'gem: --no-document'. This will prevent gems from installing documentation files, which slow down the installation process very much. 
+Make sure to add the following code to the `~/.gemrc` file: `gem: --no-document`. This will prevent gems from installing documentation files, which slow down the installation process very much. 
 
 ## New Rails Project 
 
@@ -30,15 +30,15 @@ We can use the following workflow for creating a new Rails project:
 
 > rails new.
 
-What we are doing here is creating a project-specific gemset called 'app_name'. The third line in our blockquote is doing several things. First, 'rvm use' is telling RVM to switch to this gemset. The 'ruby-2.2.0@app_name' is telling RVM not only the name of the gemset, but also the ruby version that should be installed in that gemset. Finally, the '--ruby-version' creates two files: '.ruby-version' and '.ruby-gemset'. These files will make it so that, whenever you enter into the directory, rvm will use the correct version of ruby and the correct gemset. Using *this* workflow means that you can forget about having to switch to the correct gemset.
+What we are doing here is creating a project-specific gemset called `app_name`. The third line in our blockquote is doing several things. First, `rvm use` is telling RVM to switch to this gemset. The `ruby-2.2.0@app_name` is telling RVM not only the name of the gemset, but also the ruby version that should be installed in that gemset. Finally, the `--ruby-version` creates two files: `.ruby-version` and `.ruby-gemset`. These files will make it so that, whenever you enter into the directory, rvm will use the correct version of ruby and the correct gemset. Using *this* workflow means that you can forget about having to switch to the correct gemset.
 
 ## Logs 
 
-When a browser sends requests to a WEBrick web server, diagnostic messages ae written to the console *and* 'log/development.log'.
+When a browser sends requests to a WEBrick web server, diagnostic messages ae written to the console *and* `log/development.log`.
 
 ### When to Stop WEBrick 
 
-In general, it is only necessary to reload the web server when we make changes to the 'Gemfile' or to configuration files. If I have made changes to the Gemfile, then I need to run 'bundle install' before restarting the web server. 
+In general, it is only necessary to reload the web server when we make changes to the `Gemfile` or to configuration files. If I have made changes to the Gemfile, then I need to run `bundle install` before restarting the web server. 
 
 # Rails is Opinionated #
 
@@ -46,14 +46,14 @@ Rails is opinionated software. What this means is that decisions have been made 
 
 ## Directory Structure ##
 
-Most of our work will be spent in the 'app/' directory. The app directory contains: 
+Most of our work will be spent in the `app/` directory. The app directory contains: 
 
-1. 'assets/' - A directory for images, javascript, and stylesheets.
-2. 'controllers/' - A directory for our controllers.
-3. 'helpers/' - A directory for rails views helpers. This directory will contain reusable code (such as headers and footers) that generate HTML. 
-4. 'mailers/' - A directory for code that sends e-mail messages.
-5. 'models/' - A directory to hold our models.
-6. 'views/' - A directory to hold code that generates HTML pages. 
+1. `assets/` - A directory for images, javascript, and stylesheets.
+2. `controllers/` - A directory for our controllers.
+3. `helpers/` - A directory for rails views helpers. This directory will contain reusable code (such as headers and footers) that generate HTML. 
+4. `mailers/` - A directory for code that sends e-mail messages.
+5. `models/` - A directory to hold our models.
+6. `views/` - A directory to hold code that generates HTML pages. 
 
 # Git #
 
@@ -67,4 +67,10 @@ After creating a repository on github.com - making sure not to initialize it thr
 
 ## RVM, Gemfile, and bundle ##
 
-Here is how it all works together. RVM allows us to create a space for our gems to be installed in via gemsets. The Gemfile lists the gems we want to use. Bundler, through 'bundle install', reads the Gemfile and proceeds to install the gems into the gemset, managing dependencies for I in the process. Finally, the Gemfile.lock contains version numbers and dependencies for the gems in our Gemfile.
+Here is how it all works together. RVM allows us to create a space for our gems to be installed in via gemsets. The Gemfile lists the gems we want to use. Bundler, through `bundle install`, reads the Gemfile and proceeds to install the gems into the gemset, managing dependencies for I in the process. Finally, the Gemfile.lock contains version numbers and dependencies for the gems in our Gemfile.
+
+## Configuration Security ##
+
+Rails provides the file `config/secrets.yml` for configuration settings. It is *bad* practice to put any actual secrets in this file. If I decide to go against this advice, and put actual passwords and other sensitive data in this file, I have to make sure that it is part of my `.gitignore` so that it will not be uploaded to Github, where others can view it. 
+
+Configuration settings that must remain private are best placed is *environmental variables*. The way that this works is that, generally, we will use code such as `export GMAIL_USERNAME="username"` in a file such as our `.bash` or `.bash_rc` file, and then point `config/secrets.yml` to those environmental variables. (Look on Google how to do this). 
