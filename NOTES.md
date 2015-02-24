@@ -10,6 +10,8 @@ One important piece of the puzzle to remember is that gems installed in the 'glo
 
 Once you create a gemset, install the correct version of the gems in that gemset. Then, whenever you are in a project directory, make sure you are using the correct gemset. 
 
+Each time I update the Gemset file, I have to run 'bundle install' for bundle to install the gems properly. 
+
 ## Faster Gem Installation
 
 Make sure to add the following code to the '~/.gemrc' file: 'gem: --no-document'. This will prevent gems from installing documentation files, which slow down the installation process very much. 
@@ -53,7 +55,6 @@ Most of our work will be spent in the 'app/' directory. The app directory contai
 5. 'models/' - A directory to hold our models.
 6. 'views/' - A directory to hold code that generates HTML pages. 
 
-
 # Git #
 
 It is important to configure git properly when using Rails. To configure git, run the following:
@@ -63,3 +64,7 @@ It is important to configure git properly when using Rails. To configure git, ru
 > git config --global user.email "real@email.com"
 
 After creating a repository on github.com - making sure not to initialize it through the web interface - directions for initializing a repo from an existing directory will be available. 
+
+## RVM, Gemfile, and bundle ##
+
+Here is how it all works together. RVM allows us to create a space for our gems to be installed in via gemsets. The Gemfile lists the gems we want to use. Bundler, through 'bundle install', reads the Gemfile and proceeds to install the gems into the gemset, managing dependencies for I in the process. Finally, the Gemfile.lock contains version numbers and dependencies for the gems in our Gemfile.
