@@ -75,4 +75,8 @@ Rails provides the file `config/secrets.yml` for configuration settings. It is *
 
 Configuration settings that must remain private are best placed is *environmental variables*. The way that this works is that, generally, we will use code such as `export GMAIL_USERNAME="username"` in a file such as our `.bash` or `.bash_rc` file, and then point `config/secrets.yml` to those environmental variables. (Look on Google how to do this). Furthermore, it is a good idea to use quotes to surround configuration values (credentials) in the `.bashrc` or `.bash_profile` files. If the value itself contains punctuation characters, then they need to be surrounded by single quotes as well, such as `"'%$@$24'"`. Another tip - make sure that you set the permissions for whatever file contains the sensitive data correctly. For example, in my `.bashrc` file, I have the permissions set to 600 - this allows me to read and write to the file, but not execute. The group owner or other users cannot do anything with this file!  It is important to note that Rails will replace `ENV["VAR_NAME"]` by looking up the variable in the environment. This code can be used anywhere in Rails.
 
-### Secret Token ###
+## Connect to an Email Server ##
+
+In production, for high-volume transactional e-mail and improved deliverabiity, it is best to use a service such as Mandrill or Mailgun to send e-mail. We need to configure rails to use these services, and we do that in the `config/environments/development.rb` file.
+
+Notice the code that we are using to to set feed values into this file that will serve as settings. For example, `user_name: Rails.application.secrets.email_provider_username` clearly points to the `config/secrets.yml` file. The secrets.yml file is reading from our system environmental variables. Those variables are then available to the rest of the system using dot notation as *configuration variables*.
