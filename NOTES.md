@@ -141,4 +141,26 @@ A controller that implements these seven actions is said to be *RESTful*.
 
 ### The View ###
 
-A view file combines Ruby code (the default is embedded Ruby) with HTML markup. It is good practice to limit **Ruby code** in view files to only displaying data. Anything else belongs in the controller. 
+A view file combines Ruby code (the default is embedded Ruby) with HTML markup. It is good practice to limit **Ruby code** in view files to only displaying data. Anything else belongs in the controller. Because one controller typically has several views, Rails typically uses an entirely new folder for each controller. 
+
+## The Name Game ##
+
+Much of the art of programming lies in choosing suitable names for our creation. It is important because it makes the logic easier to follow. From this flows a host of benefits: the code is easier to mantain, easier to pass down to others, logical errors are easier to catch, and refraction is also easier as a result. 
+
+## Naming Conventions ##
+
+Rails is picky about class name and file names. This is because of the "convention over configuration" principle. By *forcing* developers to use certain naming patterns, Rails is able to avoid complex configuration. In Rails, it is important to observe the following conventions:
+
+1. `class Visitor` - The name is capitalized and singular
+2. `VisitorsController < ApplicationController` - models are in capitalized Camel Case
+3. `the_file_name` - files are lowercase, snake case
+
+The controller file name follows the controller class name, but in snake_case: `app/controllers/visitors_controller.rb`
+
+The model file name follows the model class name, but lower case: `app/models/visitor.rb`
+
+The view folder matches the model class name, but plural and lowercase: `app/views/visitors`
+
+## Creating a New Application ##
+
+Because they are detailed, the errors we encounter when building a Rails application can help us build it. We start with modifying the router, and then attempting to request the new route. The errors that pop up will ensure that we have the minimum code necessary to make our application work. 
