@@ -80,3 +80,65 @@ Configuration settings that must remain private are best placed is *environmenta
 In production, for high-volume transactional e-mail and improved deliverabiity, it is best to use a service such as Mandrill or Mailgun to send e-mail. We need to configure rails to use these services, and we do that in the `config/environments/development.rb` file.
 
 Notice the code that we are using to to set feed values into this file that will serve as settings. For example, `user_name: Rails.application.secrets.email_provider_username` clearly points to the `config/secrets.yml` file. The secrets.yml file is reading from our system environmental variables. Those variables are then available to the rest of the system using dot notation as *configuration variables*.
+
+# Static Pages and Routing #
+
+The **convention** in rails is to store static pages in the `public/` folder. If we place a file called `index.html` in this directory, and do no further configuration / routing, Rails is smart enough to serve up that page. The Rails router, which we will talk about in more depth later in the tutorial, is responsible for figuring out which controller and action combo to use. The router bases the action it takes on the HTTP verb and the URL. 
+
+If we request the URL `localhost:3000/about`, Rails will automatically try to retrieve the `about.html` page in our public folder. Rails will serve the correct page with `localhost:3000/about.html` as well!
+
+## Introducing Routes ##
+
+Rails provides a configuration file to control web request routing in `config/routes.rb`. In this file, we can control what action Rails takes based on the URL that the browser is attempting to access.
+
+For example, if we edit delete our `public/index.html` file and edit the routes.rb file, we can set the the root of the application to go to about.html:
+
+**routes.rb**
+`root to: redirect("/about")`
+
+What I just witnessed was a bit of Rails magic, and the following paragraph from the tutorial is important enough that it deserves to be quoted verbatim:
+
+> Some developers complain that the "convention over configuration" principle is **black magic**.
+> It is **not** obvious why pages are delivered from teh `public` folder; it just happens.
+> If you do not know the convention, you could be left scratching your head and looking for the code that maps http://localhost:3000/ to the `public/index.html` file.
+> The code is buried deep in the rails framework.
+> **However, if you know the convention and the technique for overriding it, you have both convenience and power at your disposal. **
+
+## The Request Response Cycle ##
+
+The web is nothing more than a web browser *requesting* files from a web server. If the HTML file contains the appropriate code, the web browser will also request CSS, JavaScript, and image files. Nowadays, some web pages including streaming music and video, which require an open "pipe" between the web browser and the web server. However, even in those cases, the setup for the stream is done via a simple response-request cycle. 
+
+We can reduce the complexity of the web to this request-response cycle. The developer tools that are available in most browsers allow us to see the actual information passing between the web browser and web server.  
+
+
+## Document Object Model ##
+
+Modern browsers load files asynchronously. This means that, no matter where the files appear within the HTML, the browser will try to download all files before rendering the page. Once all files are downloaded and the browser renders the page, it fires a `DOM ready` even. The DOM is an API that provides a structural representation of the HTML document. This allows me to modify the document with a scripting language such as JavaScript. 
+
+## The Model-View-Controller Design Pattern ##
+
+The MVC is a central organizing principle of Rails. When a web requests comes into my Rails application, the router is responsible for routing that request to a controller. (The router does this by analyzing the HTTP method and URL of the request). The controller executes code based on the action that was passed down from the router. This code takes care of reaching out to the Model (which contains our database) if it has to in order to collect the appropriate data. The View provides the structure and layout. The controller then combines the layout from the View with the data from the Model to create a web page. This *dynamically created web page* is then passed to the browser.
+
+Rails applications can, and often do, have multiple controllers, models, and views. A Rails developer has to create the code that will combine each of these components correctly. However, each of the components inherets methods from superclasses defined in Rails. This means there is less code for the developer to write. 
+
+### The Model ###
+
+In most cases, the model retrieves data from a database. However, it is also possible for the model to retrieve data from a remote resource such as Twitter or Facebook.
+
+### The Controller ###
+
+A controller can, and often does, have more than one action. Each action corresponds to a method defined in that controller file. In practice, Rails developers **try to limit themselves** to seven standard actions in their controllers:
+
+1. index
+2. show
+3. new
+4. create
+5. edit
+6. update
+7. destroy
+
+A controller that implements these seven actions is said to be *RESTful*. 
+
+### The View ###
+
+A view file combines Ruby code (the default is embedded Ruby) with HTML markup. It is good practice to limit **Ruby code** in view files to only displaying data. Anything else belongs in the controller. 
