@@ -164,3 +164,48 @@ The view folder matches the model class name, but plural and lowercase: `app/vie
 ## Creating a New Application ##
 
 Because they are detailed, the errors we encounter when building a Rails application can help us build it. We start with modifying the router, and then attempting to request the new route. The errors that pop up will ensure that we have the minimum code necessary to make our application work. 
+
+# Troubleshooting #
+
+The following are a few resources for troubleshooting Rails applications. 
+
+## Interactive Ruby ##
+
+To run snippets of Ruby code, we can use Interactive Ruby by typing `irb` at the command line. IRB will let me execute Ruby code and receive a response in real time, making it perfect for use as an experimentation tool, or simply for checking the logic and syntax of small snippets of code.   
+
+IRB can handle multiple lines of code; it uses the keyword `end` to determine when it should start executing the code. 
+
+Also, it is important to remember that we can load code into IRB from a file using `load 'path/to/file.rb'`. 
+
+**Quitting* IRB is done with ctrl+d or typing `exit` at the command prompt. 
+
+## Rails console ##
+
+IRB does not know Rails - it only knows Ruby. The Rails console, which we can get to by typing `rails console` in our Rails application root directory, is a tool like IRB, but with "knowledge" of Ruby. In fact, Rails console loads my entire Ruby application - it has access not only to pre-defined Rails methods, but also to objects, methods, models, and logic that I created as part of coding my Rails project.
+
+## Rails Logger ##
+
+The Rails application has a server log file located at `log/development.log` or `log/production.log`, depending on what environment it is running in. In our controller, we can define messages that are logged to our server log file. This is helpful (kind of like printf debugging in C, for example). The code to so would look like:
+
+> Rails.logger.debug "DEBUG: Owner name is #{@owner.name}"
+
+I can add logging messages to models, controllers, and views (via erb). 
+
+Messages added via `logger.debug` will show up in development, but not in production - hence the debug name. However, messages that use other logger methods will show up in production. These include:
+
+1. `logger.info`
+2. `logger.warn`
+3. `logger.error`
+4. `logger.fatal`
+
+I can add color to my messages, but that topic is best explored at a later time. 
+
+The Rails logger is useful for displaying **program flow** or variable values. 
+
+## The Stack Trace ##
+
+The stack trace is displayed by our Rails application when something goes wrong. The stack trace will show everything that happened up to the point where Rails encountered the error. (Note, while Rails has a default stack trace, the `better_errors` gem is installed in our application to modify the default behavior). 
+
+### Raising an Exception ###
+
+Instead of adding variables that Rails does not understand in order to "throw an error", we can "raise" an exception through code such as: `raise "Error message"`. Rails and Ruby provide a set of methods to raise and handle exceptions. Rails exception handlers can also be modified so that they display useful information to the viewer.  
