@@ -209,3 +209,55 @@ The stack trace is displayed by our Rails application when something goes wrong.
 ### Raising an Exception ###
 
 Instead of adding variables that Rails does not understand in order to "throw an error", we can "raise" an exception through code such as: `raise "Error message"`. Rails and Ruby provide a set of methods to raise and handle exceptions. Rails exception handlers can also be modified so that they display useful information to the viewer.  
+
+## A Little Bit of Ruby ##
+
+### Symbols ###
+
+Symbols are used very frequently in Ruby. Symbols are special in Ruby - they are immutable, meaning that they cannot be changed. Because symbols are immutable, they are **not** variables. We cannot use them on the "left side" of an assignemtn. The code `:symbol = "Steven"` would throw an error. However, we *can* do `steven = :symbol`.
+
+## Attributes ##
+
+Data that is inside an object cannot be accessed, unless we expose the data as an **attribute / property**.
+
+In Ruby, we use the accessor methods to expose data as attributes: `attr_accessor :name` means that @name can now be set from outside the object and it can be retrieved from outside the object. 
+
+What happens when we use the accessor methods? There is a great explanation on [Stackoverflow](http://stackoverflow.com/questions/4370960/what-is-attr-accessor-in-ruby). Basically, when we write `attr_accessor :name` Ruby writes the following code:
+
+> def name
+>   @name
+> end
+
+as well as:
+
+> def name=(str)
+>   @name = str
+> end
+
+The first block of code exposes @name through the method `Object#name`. The second block of code allows the instance variable @name to be set from the outside through the method `Object#name=`. Notice that `name` and `name=` are two different methods. That is the shortcut of the accessor methods. If we want to use only one of those blocks and not both, we can use attr_reader and attr_writer, respectively.  
+
+
+### Instance Variables ###
+
+Inside an object, ordinary variables only "exist" in the method in which they appear. This is called the scope of the variable. If two methods use the same variable name, the two variables are distinct one from the other. They are not linked. However, the scope of instance variables is the entire instance of that object. That means that that particular variable exists for all the methods in that object. Instance variables are denotated by a leading "@". Specifically, **in Rails** we use an instance variable in the controller when we want that variable to be available to the *view*.  
+
+### "||=" ###
+
+The set of symbols above are called the *conditional operator*. I will take the example: `@honorific ||= "Esteemed"`. The assignment will only execute if @honorific is not alreayd assigned. Conditional assignment is often used to assign a default value in the absence of an explicit assignment.  
+
+## Ruby Golf ##
+[Ruby Golf](http://www.sitepoint.com/ruby-golf/) is the sport (art?) of writing Ruby code with as few characters as possible. 
+
+## Access Control ##
+
+Sometimes, we define helper methods within a class to be used by other methods in that same class. If I do not want others to be able to access these methods from outside the class, then we need to add the method after the keyword `private`. If we do this, then the method that are defined after the word private are not accessible by other methods in the class, or by methods in a sub-class. 
+
+For example:
+
+> private
+> def class_name
+> end
+
+In the example above, I would not be able to call the class_name method by running `Object#class_name`. It could only be called by another method within the class. 
+
+*Note: Ruby provides protected methods as well. The difference between protected and private are subtle. Protected are not seen often in Rails.*
