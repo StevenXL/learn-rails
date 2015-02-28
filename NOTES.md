@@ -380,3 +380,133 @@ The rails_layout gem has created all of the "scaffolding" above for me. I do not
 1. A viewport metatag, a title, and a description
 2. Partials for navigation and flash messages
 3. HTML5 structural elements such as <header> and <main>
+
+# Front-end Frameworks
+
+A website *front end* is all the code that runs in the browser - everything that controlls the appearance of the website. This includes page layout (HTML), CSS stylesheets, and JavaScript. 
+
+## CSS Frameworks
+
+There are dozens of CSS frameworks, but Zurb Foundations and Bootstrap are particularly popular. 
+
+## JavaScript Libraries
+
+Just as there are dozens of CSS frameworks, there are many JavaScript libraries. jQuery has become the most popular due to its modular plugins that implement a wide range of effects and widgets. jQuery is used to add visual effects and interactivity to a website. This includes drop-down menus, modal windows, tabbed panels, autocompletion search forms, and sliders / carousels for images.  jQuery is **included by default** in Rails. 
+
+Another class of JavaScript frameworks exists as fully-featured web application frameworks. They allow developers to build applications that communicate with the server only to read and write data. These frameworks allow applications to function closer to a desktop application than a web page, and are termed as single-page applications. Examples include Ember.js, AngularJS, and Backbone.js. 
+
+## Front-end Frameworks
+
+Front-end Frameworks provide pre-built CSS and JavaScript. Bootstrap and Zurb Foundation are the most popular among Rails developers. 
+
+*Bootstrap* has a larger developer community than *Zurb Foundation* - more third-party projects use it.
+
+Without extensive customization, most Bootstrap or Zurb Foundation sites start to look the same. They look good, but it is difficult to differentiate a site. However, a whole industry has sprung up around selling themes for Wordpress, Tumblr, Droopla, or Joomla. Few sell themes for Rails, since it is difficult to customize a theme for a Rails application. One of those few is [RailsTheme](https://railsthemes.com/).
+
+## Zurb Foundation
+
+Zurb Foundation is packaged as a gem. As long as I included it in my Gemfile, it will be available. (The gem is called `foundation-rails`). The Zurb Foundation website provides [instructions](http://foundation.zurb.com/docs/applications.html) on how to install Zurb Foundation on a Rails app. It is very easy, but in this guide we will be using a different approach.
+
+In this guide, I will be using the `rails_layout` gem. The reason why we use these instructions is because we will be loading the Foundation JavaScript files using the *asset pipeline*. This is a best practice. Furthermore, we will be using the jQuery to load Foundation only after a "DOM Ready" event; this ensures that Foundation remains compatible with other jQuery plug-ins. 
+
+`rails generate layout:install foundation5 --force`
+
+The above command will do the following: 
+
+### Rename `application.css to `application.css.scss`
+
+This will make the application.css.scss file run through the SCSS preprocessing engine. (Note, the [Sass Basics Screencast](http://railscasts.com/episodes/268-sass-basics) on RailsCast is a great introduction). The file itself serves two purposes. First, we can add any CSS that we want to use directly to this file. Note that this is bad practice, unless the CSS is extremely simple. It is better to seperate CSS files in order to provide better organization and structure. Secondly, the file serves as a *manifest*. It tells Rails what other stylesheets need to be combined and then sent to the browser. 
+
+The first purposes is executed through this code within the file itself: `*=require_self`. The second purpose is executed through the code `*=require_tree .`. Notice that the dot notation will include the directory of the file itself as well as any subfolders. 
+
+### Create `framework_and_overrides.css.scss`
+
+This file is created in the same folder as `application.css.scss`, and therefore will be combined and sent to the browser as a single CSS file.
+
+### Modify `application.js`
+
+Within the `assets/javascript` folder, the generate command we ran above will modify the `application.js` file specifically for Zurb Foundation. This serves the same purpose in regards to JavaScript as the `application.css.scss` file does in regards to CSS.
+
+### Modify `_messages.html.erb`
+
+The generate command will also modify the messages partial so that it uses Zurb Foundation-specific classes and IDs. 
+
+### Modify `_navigation.html.erb`
+
+The purpose for modifying the navigation partial is the same as for modifying the messages partial. 
+
+### Modify `application.html.erb`
+
+Same as above. 
+
+# Zurb Foundation 
+
+Now that I have installed Zurb Foundation, let us figure out how to use it. First, remember that the CSS for Foundation is imported into our code through the `@import 'foundation'` line in our `framework_and_override.css.scss` file. The CSS that we see directly in this file are called Saas mixins, which I will explore in a later part of the tutorial.
+
+Using Foundation is all about using the appopriate CSS classes and IDs. The Foundation CSS itself does all of the styling. The [Foundation documentation](http://foundation.zurb.com/docs/) provides access to what the entire framework can offer. 
+
+# Foundation Grid System 
+
+The Foundation grid system is fundamental to how Foundation works. By default, Foundation grids are 12 columns across. The reason that this framework is responsive is because the grid changes based on *breakpoints* in the device size. For example, a section that is 12 columns across in a "large" view format will collapse to 4 columns in a "small" view format. This change is implemented through changing the class attribute(s). 
+
+We can set up a footer in our web page by using the <footer> tag. Furthermore, I can set this footer section to have two columns:
+
+> <footer class="row">
+>   <section class="small-4-columns"
+>     Copyright 2014
+>   </section>
+>   <section class="small-8-columns"
+>     All rights reserved.  
+>   </section>
+> </footer>
+ 
+## What is this code doing? 
+ 
+ 1. It is creating a footer. 
+ 2. The "row" class is creating a horizontal break. 
+ 3. I am then creating a section with the content "Copyright 2014" that is 4 columns wide in a small viewport. 
+ 4. I then create a section that is 8 columns wide in a small viewport. 
+ 5. Finally, I close the footer. 
+
+ However, the above is not a responsive design. Let me look at this code:
+
+> <footer class="row">
+>   <section class="small-12 medium-4 columns"
+>     Copyright 2014
+>   </section>
+>   <section class="small-12 medium-8 columns"
+>     All rights reserved.  
+>   </section>
+> </footer>
+
+What is this code doing? It is the same as the code above, except that is it now *responsive*. What this means is that, in a medium viewport, we are creating a footer section with two side-by-side sections. The first section will be 4 columns wide, and the second section will be 8 columns wide. 
+
+What happens in a small viewport? Well, both sections inside the footer section are 12 columns wide. Because the entire length of the grid is 12 columns, these two sections no longer fit side-by-side. In fact, in the small viewport, our two sections will be stacked one on top of the other!
+
+Why did we code the small screen first? The Foundation website has a section specifically discussing [the Foundation grid system](http://foundation.zurb.com/docs/components/grid.html):
+
+Foundation is mobile-first. Code for small screens first, and larger devices will inherit those styles. Customize for larger screens as necessary.
+
+(Note that, because we did not define a large viewport, the large viewport and medium viewport will look the same. Think of the code as saying "for medium or larger viewports"). 
+
+# Sass Mixins and Foundation 
+
+Foundation classes often use a mix of *semantic* and *presentational* names. What is the difference? *Semantic* names describe *function*, while *presentational* names describe *appearance*. For long-term mantainability, it is important to use semantic naming. In order to do this, we can use Sass Mixins with Foundation. Mixins allow me to create my own class names and map them to Foundation class names. I would use my own class names while using Foundation styling.
+
+Mixins are used within Sass files to create new CSS classes from existing CSS classes. Let me take a look at some code to better understand this:
+
+> @mixin twelve-columns {
+>   @extend .small-12;
+>   @extend .columns;
+>   }
+
+We have now created a new CSS class called "twelve-columns". This class has the stylings of the "small-12" and "columns" classes that are defined in the Foundation framework. Now, I can use `class="twelve-columns"` and it is equivalent to using `class="small-12 columns"`. The `@mixin` directive creates a new CSS class. The `@extend` directive means that the new CSS class *inherits* (here I use the term loosely) from existing CSS rules. Finally, we can use the `@include` directive to add existing mixins:
+
+> main {
+>  @include twelve-columns;
+>  background-color: #eee;
+>  }
+
+# Set up SimpleForm with Zurb Foundation
+
+Although Rails provides [Form Helpers](http://guides.rubyonrails.org/form_helpers.html), most Rails developers use SimpleForm. SimpleForm comes packaged as a gem, and I can install it using `rails generate simple_form:install --foundation`. The last flag in that command will direct SimpleForm to install using settings for Zurb Foundation. 
