@@ -510,3 +510,22 @@ We have now created a new CSS class called "twelve-columns". This class has the 
 # Set up SimpleForm with Zurb Foundation
 
 Although Rails provides [Form Helpers](http://guides.rubyonrails.org/form_helpers.html), most Rails developers use SimpleForm. SimpleForm comes packaged as a gem, and I can install it using `rails generate simple_form:install --foundation`. The last flag in that command will direct SimpleForm to install using settings for Zurb Foundation. 
+
+# Adding Pages
+
+So far, we have seen 2 types of pages in Rails:
+
+1. Static pages served from the `public` folder
+2. Dynamic pages compiled using our views, partials, and assets
+
+However, there is a third type of web page: a static view that uses the application layout. Remember that the first type of page *does not* use the asset pipeline. It will not have access to the CSS and JavaScript files that pages rendered dynamically have. We can add these files to a static page itself, but then we are duplicating code and dynamically generated content (such as dynamic paths) cannot be used. 
+
+Because of the limitations of putting this third type of web page in the `public` folder, Rails developers normally create a dynamic page that has no model and a nearly empty controller to serve this third type of web page. This is the solution for *static views that use the application layout*. The **high_voltage** gem provides this functionality, since it is used so often by Rails developers. 
+
+## Using the high_voltage Gem
+
+The high_voltage gem provides default routing, such that any URL with the form http://localhost:3000/pages/about will obtain a view from the `app/views/pages` directory.
+
+First, we have to create a new folder: `app/views/pages`. Then create the view: `about.html.erb`. Remember that any folder / files we add to this directory will be created dynamically as far as Rails is concerned. It will therefore have access to the asset pipeline. That is the whole point of why we are creating a static page this way instead of using the `public/` folder. 
+
+If we want to use a Rails route helper to create a link to a view within our `app/views/pages` directory, we would use code like this: `link_to "About", page_path("about")`.
