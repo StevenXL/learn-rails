@@ -529,3 +529,105 @@ The high_voltage gem provides default routing, such that any URL with the form h
 First, we have to create a new folder: `app/views/pages`. Then create the view: `about.html.erb`. Remember that any folder / files we add to this directory will be created dynamically as far as Rails is concerned. It will therefore have access to the asset pipeline. That is the whole point of why we are creating a static page this way instead of using the `public/` folder. 
 
 If we want to use a Rails route helper to create a link to a view within our `app/views/pages` directory, we would use code like this: `link_to "About", page_path("about")`.
+
+# ActiveModel vs. ActiveRecord
+
+When building database-backed applications, Rails developers create full-fledge models that inherit behavior from ActiveRecord. However, if our application does not need all of that functionality, I can create a model that "mixes" in behavior from *ActiveModel*. The code on the model would look like this:
+
+> class Contact
+>  include ActiveModel::Model
+>
+> attr_accessor :name, :string
+>  attr_accessor :email, :string
+>  attr_accessor :content, :string
+>
+>  validates_presence_of :name
+>  validates_presence_of :email
+>  validates_presence_of :content
+>
+>  validates_format_of :email,
+>  :with => /\A[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}\z/i
+>
+>  validates_length_of :content, :maximum => 500
+> end
+
+Now, we have a modle that will validate information sent to it from a web page. Let us walk through the code to explain it:
+
+`class Contact` give the model the name of Contact.
+`include ActiveModel::Model` allows our class to include the functionality of the ActiveModel:Model module. This module includes pre-written code for validation and conversion of data, such as validates_prescence_of, validates_format_of, and validates_length_of. (Note that there is a whole module - ActiveModel::Validations::HelperMethods - on the Rails API that goes deep into how this works).
+
+Notice that we create attributes for the model using the Ruby attr_accessor. The attribute matches the name of the fields in the form, and they contain the *type* of the field. 
+
+The model would go in `app/models/contact.rb`.
+
+# Contacts Page
+
+Once I have completed the model that will validate the contact page, I have to create a contact page view. Like other views, we have to create this in a folder called `app/views/contacts`. Remember, we are basically creating an entire MVC framework for our contacts page. Even though it is not database driven, this ensures two things: 
+
+1. **Asset Pipeline** - Our asset pipeline (CSS, JavaScript) will be available to this page.
+2. **Validation** - By using a model that inherits functionality from ActiveModel::Model, we can use pre-written validation code on our form. 
+
+## SimpleForm
+
+SimpleForm configures itself if we provide a model that inherits from ActiveRecord. SimpleForm will give the form a name that matches the model name, and SimpleForm will generate a URL based on the model name. 
+
+# The Seven Standard Controller Actions
+
+In order to manage **any** list, we need the following capabilities:
+
+1. **index** - Display a list of all the items in our list
+2. **show** - Display a record of *one* item. This usually includes details on that item that we would not include in the **index** view. 
+3. **new** - Display a form in order to create a new item.
+4. **create** - This functionality works in conjunction with our **new** functionality. It takes the data from the **new** form and saves the item in our database. 
+5. **edit** - Edit a particular item.
+6. **update** - This functionality works in conjunction with the **edit** functionality. It takes the updated information in the **edit** form and saves it to our database.
+7. **destroy** - Delete a record.
+
+It is plain to see that not all functions will have their own view. The **create** functionality typically redicrects to the **show** view; the **update** functionality typically redirects to the **show** view, and the **destroy** functionality typically redirects to the **index** view. So while we have seven functions, we only have four views. 
+
+Note that there are several other functions that add convenience but not new capabilities. These would be:
+
+1. **pagination** - Display only a portion of a list (a modified **show** function)
+2. **sort** - Display the information in a particular way (a modified **show** function that can also include **pagination**)
+3. **bulk edit** - Edit multiple items at once (a modified **edit** function)
+
+When our controller inherits from ActiveController, we get these seven standard actions *for free*. What does this mean? It means that the controller, by default, will render a view called *new.html.erb*, that lives in the appropriate sub-folder inside of `app/views` when we call the action **new**. 
+
+A controller that uses these actions is said to be RESTful. 
+
+## Tying This Back to Our Form
+
+By default, our controller will render the new.html.erb view when the new method is called. Furthermore, SimpleForm will create a destination URL back to the controller, asking for the *create* method. I will have to implement this action. 
+
+## Creating the controller
+
+We have created the Model (`app/models/contact.rb`), we have created the view (`app/views/contacts/new.html.erb`), and now I need to create the Controller (`app/controllers/contact_controller.rb`).
+
+# Mass-Assignment Vulnerabilities
+
+Rails protects us from *mass-assignment vulnerabilities*. For example, let me assume I have a database with users. This database has a flag attribute that determines if that user is an administrator or not. A hacker can send in a form with data that sets this attribute to "true", compromising the security of my site. Rails forces us to *whitelist* the attributes that can be set when creating a new entry in the database.
+
+How does Rails do this? In our create method, within our contacts controller, we have the following code:
+
+>  def create
+>    @contact = Contact.new(secure_params)
+>    .
+>    .
+>    .
+>  end
+
+Within the same controller, I define secure_params as follows:
+
+>  def secure_params
+>    params.require(:contact).permit(:name, :email, :content)
+>  end
+
+What I am doing here is going into the *params* hash, requiring that the hash contact a key called ":contact", and permitting only the keys ":name", ":email", and ":content" to be set as attributes in our database. Furthermore, remember that we validated that these inputs conform to our standards in our model.  
+
+# Routing
+
+At this point, I have added my Model (`app/models/contact.rb`); I have added my View (`app/views/contacts/new.html.erb`); and I have added by controller (`app/controllers/contacts_controller.rb`).
+
+However, there is no way yet for anyone to access this MVC network, since I have not yet configured the router. 
+
+I can do this by adding the following to the router: `resources :contacts, only: [:new, :create]`. If I had not added the `only: [:new, :create]` code, then Rails would have added routes for an entire RESTful model - i.e., all seven functions. 
