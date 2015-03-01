@@ -1,3 +1,5 @@
+require 'google_drive_v0'
+
 class Contact
   include ActiveModel::Model
 
@@ -13,4 +15,23 @@ class Contact
   :with => /\A[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}\z/i
 
   validates_length_of :content, :maximum => 500
+
+  def update_spreadsheet
+    connection = GoogleDriveV0.login(Rails.application.secrets.email_provider_username, Rails.application.secrets.email_provider_password)
+
+    spreadsheet = connection.spreadsheet_by_title("Learn-Rails-Example")
+
+    if spreadsheet.nil?
+      spreadsheet = connection.create_spreadsheet("Learn-Rails-Example")
+    end
+
+    worksheet = spreadsheet.worksheets[0]
+    last_row = 1 + worksheet.num_rows
+    worksheet[last_row, 1] = Time.new
+    worksheet[last_row, 2] = self.name           # Note that "self" refers to the current INSTANCE of the class
+    worksheet[last_row, 3] = self.email
+    worksheet[last_row, 4] = self.content
+    worksheet.save
+  end
+
 end

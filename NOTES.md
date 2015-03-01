@@ -631,3 +631,11 @@ At this point, I have added my Model (`app/models/contact.rb`); I have added my 
 However, there is no way yet for anyone to access this MVC network, since I have not yet configured the router. 
 
 I can do this by adding the following to the router: `resources :contacts, only: [:new, :create]`. If I had not added the `only: [:new, :create]` code, then Rails would have added routes for an entire RESTful model - i.e., all seven functions. 
+
+# Spreadsheet Connection 
+
+Although most professional Rails applications are database-driven, I am not going to do that in this tutorial. Databases added complexity, specifically around user acces and authentication. 
+
+What I am going to do is store the form data in Google Drive through Google Drive API. I will send the data to a spreadsheet on Google Drive, and since Google already takes care of user access and uthentication, I do not have to worry about it. The google_drive gem will provide the appropriate functionality. (It is a wrapper for the Google Drive API). 
+
+We will add the data to our model. Saving data to a Google Drive Spreadsheet is a data manipulation operation, and all data manipulation should be handled by the model. This follows the Rails maxim of "Skinny Controller, Fat Model". (Note that a controller should have only enough code to instantiate a model and render a web page). 
