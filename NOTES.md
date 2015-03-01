@@ -639,3 +639,9 @@ Although most professional Rails applications are database-driven, I am not goin
 What I am going to do is store the form data in Google Drive through Google Drive API. I will send the data to a spreadsheet on Google Drive, and since Google already takes care of user access and uthentication, I do not have to worry about it. The google_drive gem will provide the appropriate functionality. (It is a wrapper for the Google Drive API). 
 
 We will add the data to our model. Saving data to a Google Drive Spreadsheet is a data manipulation operation, and all data manipulation should be handled by the model. This follows the Rails maxim of "Skinny Controller, Fat Model". (Note that a controller should have only enough code to instantiate a model and render a web page). 
+
+# Transactional E-mail
+
+Transaction e-mail is e-mail sent from a web application. Common examples include email verifying registration, shipping of an item, or a change in the user settings. The ActionMailer gem makes it easy to send transaction e-mail.
+
+Tranactional e-mail in Rails hues closely to the MVC model, but I will need a Model, a View, and a *Mailer*. A mailer is similar to a controller in that it combines attributes from a model with a view file. Any method we add to a mailer class can be called from a controller, triggering an e-mail. 

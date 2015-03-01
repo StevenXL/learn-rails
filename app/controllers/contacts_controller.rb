@@ -8,7 +8,7 @@ class ContactsController < ApplicationController
 
     if @contact.valid?
       @contact.update_spreadsheet
-      #TODO Send Message
+      UserMailer.contact_email(@contact).deliver
       
       flash[:notice] = "Message sent from #{@contact.name}"
 
